@@ -1,0 +1,120 @@
+{
+    "version": 6,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 25,
+        "patch": 0
+    },
+    "configurePresets": [
+        {
+            "hidden": true,
+            "name": "default",
+            "displayName": "Default",
+            "binaryDir": "${sourceDir}/artifacts/build/${presetName}",
+            "installDir": "${sourceDir}/artifacts/install/${presetName}",
+            "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
+            "cacheVariables": {
+                "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions;--clean-after-build",
+                "VCPKG_DISABLE_COMPILER_TRACKING": true
+            }
+        },
+        {
+            "inherits": "default",
+            "name": "devel",
+            "displayName": "Development",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTING": true
+            }
+        },
+        {
+            "inherits": "default",
+            "name": "release",
+            "displayName": "Release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "BUILD_TESTING": false
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "debug",
+            "displayName": "Debug",
+            "configurePreset": "devel",
+            "configuration": "Debug",
+            "targets": [
+                "ALL_BUILD"
+            ]
+        },
+        {
+            "name": "release",
+            "displayName": "Release",
+            "configurePreset": "default",
+            "configuration": "Release",
+            "targets": [
+                "ALL_BUILD"
+            ]
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "displayName": "Default",
+            "configurePreset": "debug",
+            "configuration": "Debug"
+        }
+    ],
+    "packagePresets": [
+        {
+            "name": "default",
+            "displayName": "Default",
+            "configurePreset": "release",
+            "configurations": [
+                "Release"
+            ],
+            "generators": [
+                "ZIP"
+            ],
+            "packageDirectory": "${sourceDir}/artifacts"
+        }
+    ],
+    "workflowPresets": [
+        {
+            "name": "ci",
+            "displayName": "Continuous Integration",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "devel"
+                },
+                {
+                    "type": "build",
+                    "name": "debug"
+                },
+                {
+                    "type": "test",
+                    "name": "default"
+                }
+            ]
+        },
+        {
+            "name": "package",
+            "displayName": "Package Release",
+            "steps": [
+                {
+                    "type": "configure",
+                    "name": "release"
+                },
+                {
+                    "type": "build",
+                    "name": "release"
+                },
+                {
+                    "type": "package",
+                    "name": "default"
+                }
+            ]
+        }
+    ]
+}

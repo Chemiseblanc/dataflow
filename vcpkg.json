@@ -1,0 +1,15 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+    "name": "dataflow",
+    "default-features": [
+        "json"
+    ],
+    "features": {
+        "json": {
+            "description": "Support for creating task graphs from JSON files",
+            "dependencies": [
+                "nlohmann-json"
+            ]
+        }
+    }
+}
