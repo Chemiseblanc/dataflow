@@ -1,6 +1,6 @@
 #pragma once
 
-#include <cstdint>
+#include <cstddef>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -9,23 +9,22 @@
 namespace dataflow {
 class node {
  public:
-  virtual ~node() {}
+  virtual ~node() = default;
+
   virtual void operator()() {}
 
-  const std::string& label() const;
+  [[nodiscard]] const std::string& label() const;
 
-  const std::string& input_name(std::size_t i) const;
-  std::size_t input_size() const;
-  std::shared_ptr<void>& input(std::size_t i) { return get_input_data(i); }
+  [[nodiscard]] const std::string& input_name(std::size_t i) const;
+  [[nodiscard]] std::size_t input_size() const;
+  [[nodiscard]] std::shared_ptr<void>& input(std::size_t i);
 
-  const std::string& output_name(std::size_t i) const;
-  std::size_t output_size() const;
-  const std::shared_ptr<void>& output(std::size_t i) const {
-    return get_output_data(i);
-  }
+  [[nodiscard]] const std::string& output_name(std::size_t i) const;
+  [[nodiscard]] std::size_t output_size() const;
+  [[nodiscard]] const std::shared_ptr<void>& output(std::size_t i) const;
 
-  bool output_connected_to(const node& other) const;
-  bool input_connected_to(const node& other) const;
+  [[nodiscard]] bool output_connected_to(const node& other) const;
+  [[nodiscard]] bool input_connected_to(const node& other) const;
 
   void set_label(const std::string& label);
   void set_input_label(std::size_t i, const std::string& label);
@@ -36,17 +35,21 @@ class node {
   std::size_t add_outputs(std::vector<std::shared_ptr<void>> ptrs);
 
   std::shared_ptr<void>& get_input_data(std::size_t i);
-  const std::shared_ptr<void>& get_input_data(std::size_t i) const;
+  [[nodiscard]] const std::shared_ptr<void>& get_input_data(
+      std::size_t i) const;
 
   std::shared_ptr<void>& get_output_data(std::size_t i);
-  const std::shared_ptr<void>& get_output_data(std::size_t i) const;
+  [[nodiscard]] const std::shared_ptr<void>& get_output_data(
+      std::size_t i) const;
 
  private:
   std::string node_label;
+
   struct port {
     std::string label;
     std::shared_ptr<void> data;
   };
+
   std::vector<port> input_ports;
   std::vector<port> output_ports;
 };
@@ -70,13 +73,13 @@ class inputs : public virtual node {
   }
 
   template <std::size_t i>
-  bool has() const {
+  [[nodiscard]] bool has() const {
     auto ptr =
         std::static_pointer_cast<type<i>>(get_input_data(starting_idx + i));
     return ptr != nullptr;
   }
 
-  std::shared_ptr<void>& connect(std::size_t i) {
+  std::shared_ptr<void>& connect(const std::size_t i) {
     return get_input_data(starting_idx + i);
   }
 
@@ -104,7 +107,8 @@ class outputs : public virtual node {
     return *ptr;
   }
 
-  const std::shared_ptr<void>& connect(std::size_t i) const {
+  [[nodiscard]] const std::shared_ptr<void>& connect(
+      const std::size_t i) const {
     return get_output_data(starting_idx + i);
   }
 

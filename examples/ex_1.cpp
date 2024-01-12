@@ -7,17 +7,18 @@
 #include "dataflow/runtime.hpp"
 
 // Node types
-class test_source : public dataflow::outputs<int> {
+class test_source final : public dataflow::outputs<int> {
  public:
-  test_source(int value) { outputs::get<0>() = value; }
+  explicit test_source(const int value) { outputs::get<0>() = value; }
   void operator()() override {
     std::cout << "Created value " << outputs::get<0>() << std::endl;
   }
 };
 
-class test_node : public dataflow::inputs<int>, public dataflow::outputs<int> {
+class test_node final : public dataflow::inputs<int>,
+                        public dataflow::outputs<int> {
  public:
-  test_node() {}
+  test_node() = default;
   void operator()() override {
     std::cout << "Recieved value: " << inputs::get<0>();
     outputs::get<0>() = 2 * inputs::get<0>();
@@ -25,9 +26,9 @@ class test_node : public dataflow::inputs<int>, public dataflow::outputs<int> {
   }
 };
 
-class test_sink : public dataflow::inputs<int> {
+class test_sink final : public dataflow::inputs<int> {
  public:
-  test_sink() {}
+  test_sink() = default;
   void operator()() override {
     std::cout << "Recieved value: " << inputs::get<0>() << std::endl;
   }
@@ -37,16 +38,16 @@ class test_sink : public dataflow::inputs<int> {
 // These are required when creating a graph from a json config or otherwise at
 // runtime.
 // They can optionally define a schema for the node which can be used by other
-// applications to generate a UI for creating graphs
-class test_source_factory : public dataflow::factory {
+// applications to generate a UI for editing dataflows
+class test_source_factory final : public dataflow::factory {
  public:
   test_source_factory() : factory("test_source") {}
-  std::unique_ptr<dataflow::node> create(
+  [[nodiscard]] std::unique_ptr<dataflow::node> create(
       const nlohmann::json& config) const override {
     return std::make_unique<test_source>(config["value"]);
   }
 
-  nlohmann::json schema() const override {
+  [[nodiscard]] nlohmann::json schema() const override {
     using namespace nlohmann::literals;
     return R"(
         {
@@ -57,7 +58,7 @@ class test_source_factory : public dataflow::factory {
                     "label": "Output"
                 }
             },
-            "props": {
+            "data": {
                 "value": {
                     "type": "int",
                     "label": "Value"
@@ -67,15 +68,15 @@ class test_source_factory : public dataflow::factory {
     )"_json;
   }
 };
-class test_node_factory : public dataflow::factory {
+class test_node_factory final : public dataflow::factory {
  public:
   test_node_factory() : factory("test_node") {}
-  std::unique_ptr<dataflow::node> create(
+  [[nodiscard]] std::unique_ptr<dataflow::node> create(
       const nlohmann::json& config) const override {
     return std::make_unique<test_node>();
   }
 
-  nlohmann::json schema() const override {
+  [[nodiscard]] nlohmann::json schema() const override {
     using namespace nlohmann::literals;
     return R"(
         {
@@ -91,19 +92,19 @@ class test_node_factory : public dataflow::factory {
                     "label": "Output"
                 }
             },
-            "props": {}
+            "data": {}
         }
     )"_json;
   }
 };
-class test_sink_factory : public dataflow::factory {
+class test_sink_factory final : public dataflow::factory {
  public:
   test_sink_factory() : factory("test_sink") {}
-  std::unique_ptr<dataflow::node> create(
+  [[nodiscard]] std::unique_ptr<dataflow::node> create(
       const nlohmann::json& config) const override {
     return std::make_unique<test_sink>();
   }
-  nlohmann::json schema() const override {
+  [[nodiscard]] nlohmann::json schema() const override {
     using namespace nlohmann::literals;
     return R"(
         {
@@ -114,7 +115,7 @@ class test_sink_factory : public dataflow::factory {
                 }
             },
             "outputs": {},
-            "props": {}
+            "data": {}
         }
       )"_json;
   }
@@ -126,19 +127,19 @@ std::string config{R"(
     {
       "id": 0,
       "type": "test_source",
-      "prop": {
+      "data": {
         "value": 1
       }
     },
     {
       "id": 1,
       "type": "test_node",
-      "prop": {}
+      "data": {}
     },
     {
       "id": 2,
       "type": "test_sink",
-      "prop": {}
+      "data": {}
     }
     ],
     "links": [
@@ -173,7 +174,7 @@ int main(int, char**) {
   std::cout << dataflow::registry::schema().dump(2) << std::endl;
 
   try {
-    dataflow::builder b{config};
+    const dataflow::builder b{config};
     dataflow::graph g{b.nodes()};
     std::cout << "Created graph: \n";
     g.dump(std::cout);

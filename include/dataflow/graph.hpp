@@ -10,9 +10,10 @@
 namespace dataflow {
 class graph {
  public:
-  graph(std::vector<node*> nodes);
+  explicit graph(const std::vector<node*>& nodes);
+  explicit graph(std::initializer_list<node*> nodes);
 
-  const std::map<node*, std::set<node*>>& adjacency() const;
+  [[nodiscard]] const std::map<node*, std::set<node*>>& adjacency() const;
 
   void dump(std::ostream& out) const;
 

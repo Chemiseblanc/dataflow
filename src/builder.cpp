@@ -56,7 +56,7 @@ builder::builder(std::istream&& config_reader) {
   for (auto&& node : config["nodes"]) {
     int id = node["id"];
     std::string type = node["type"];
-    auto& config = node["prop"];
+    auto& config = node["data"];
     node_map.emplace(id, registry::instance().create(type, config));
   }
   for (auto&& link : config["links"]) {

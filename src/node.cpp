@@ -8,10 +8,16 @@ const std::string& node::input_name(std::size_t i) const {
 }
 std::size_t node::input_size() const { return std::size(input_ports); }
 
+std::shared_ptr<void>& node::input(std::size_t i) { return get_input_data(i); }
+
 const std::string& node::output_name(std::size_t i) const {
   return output_ports.at(i).label;
 }
 std::size_t node::output_size() const { return std::size(output_ports); }
+
+const std::shared_ptr<void>& node::output(std::size_t i) const {
+  return get_output_data(i);
+}
 
 bool node::output_connected_to(const node& other) const {
   for (std::size_t i = 0; i < output_size(); ++i) {

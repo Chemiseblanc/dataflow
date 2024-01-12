@@ -1,4 +1,5 @@
 .vscode/
+.idea/
 artifacts/
 CMakeUserPresets.json
 [Nn]uget.[Cc]onfig
