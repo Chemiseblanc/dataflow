@@ -57,7 +57,7 @@ class DATAFLOW_EXPORT node {
 };
 
 template <typename... Inputs>
-class DATAFLOW_EXPORT inputs : public virtual node {
+class inputs : public virtual node {
  public:
   using tuple_type = std::tuple<Inputs...>;
   template <std::size_t i>
@@ -90,7 +90,7 @@ class DATAFLOW_EXPORT inputs : public virtual node {
 };
 
 template <typename... Outputs>
-class DATAFLOW_EXPORT outputs : public virtual node {
+class outputs : public virtual node {
  public:
   using tuple_type = std::tuple<Outputs...>;
   template <std::size_t i>

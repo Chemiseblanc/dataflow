@@ -97,6 +97,9 @@ class DATAFLOW_EXPORT builder {
       : builder(std::stringstream(config_json)) {}
   explicit builder(std::istream&& config_reader);
 
+  builder(const builder&) = delete;
+  builder& operator=(const builder&) = delete;
+
   [[nodiscard]] std::vector<node*> nodes() const;
 
  private:

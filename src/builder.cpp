@@ -5,18 +5,18 @@ namespace dataflow {
 std::string factory::node_type() const { return type; }
 
 registry& registry::instance() {
-  static registry r;
-  return r;
+  static registry reg;
+  return reg;
 }
 
-void registry::register_type(std::unique_ptr<factory> f) {
-  instance().factories[f->node_type()] = std::move(f);
+void registry::register_type(std::unique_ptr<factory> factory_ptr) {
+  instance().factories[factory_ptr->node_type()] = std::move(factory_ptr);
 }
 
 void registry::register_type(const std::string& type_name,
-                             factory_fn::fn_type f, std::string schema_str) {
+                             factory_fn::fn_type function, std::string schema_str) {
   instance().factories[type_name] =
-      std::make_unique<factory_fn>(type_name, f, schema_str);
+      std::make_unique<factory_fn>(type_name, function, schema_str);
 }
 
 std::unique_ptr<node> registry::create(const std::string& type,
