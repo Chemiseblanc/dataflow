@@ -10,10 +10,17 @@ project(Dataflow
     LANGUAGES CXX
 )
 
+include(GenerateExportHeader)
+
 # base library
 find_package(nlohmann_json CONFIG REQUIRED)
 add_library(dataflow_dataflow)
 add_library(dataflow::dataflow ALIAS dataflow_dataflow)
+generate_export_header(
+    dataflow_dataflow
+    BASE_NAME dataflow
+    EXPORT_FILE_NAME dataflow/api.hpp
+)
 set_target_properties(dataflow_dataflow
     PROPERTIES
         EXPORT_NAME dataflow
@@ -23,22 +30,25 @@ target_sources(dataflow_dataflow
     INTERFACE
         FILE_SET dataflow_headers
         TYPE HEADERS
-        BASE_DIRS include/
+        BASE_DIRS include/ ${CMAKE_CURRENT_BINARY_DIR}
         FILES
             include/dataflow/builder.hpp
             include/dataflow/dataflow.hpp
             include/dataflow/graph.hpp
             include/dataflow/node.hpp
             include/dataflow/runtime.hpp
+            "${CMAKE_CURRENT_BINARY_DIR}/dataflow/api.hpp"
     PRIVATE
         src/builder.cpp
         src/dataflow.cpp
         src/graph.cpp
         src/node.cpp
+        src/runtime.cpp
 )
 target_include_directories(dataflow_dataflow
     PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
 target_compile_features(dataflow_dataflow

@@ -8,10 +8,11 @@
 
 #include <nlohmann/json.hpp>
 
+#include "dataflow/api.hpp"
 #include "dataflow/node.hpp"
 
 namespace dataflow {
-class factory {
+class DATAFLOW_EXPORT factory {
  public:
   explicit factory(std::string type_name) : type{std::move(type_name)} {}
 
@@ -26,7 +27,7 @@ class factory {
   std::string type;
 };
 
-class factory_fn final : public factory {
+class DATAFLOW_EXPORT factory_fn final : public factory {
  public:
   using fn_type = std::function<std::unique_ptr<node>(const nlohmann::json&)>;
 
@@ -51,7 +52,7 @@ class factory_fn final : public factory {
   std::string schema_string;
 };
 
-class registry {
+class DATAFLOW_EXPORT registry {
  public:
   static registry& instance();
 
@@ -90,7 +91,7 @@ class registry {
   std::map<std::string, std::unique_ptr<factory>> factories;
 };
 
-class builder {
+class DATAFLOW_EXPORT builder {
  public:
   explicit builder(const std::string& config_json)
       : builder(std::stringstream(config_json)) {}

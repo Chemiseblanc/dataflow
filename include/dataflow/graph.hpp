@@ -5,10 +5,11 @@
 #include <set>
 #include <vector>
 
+#include "dataflow/api.hpp"
 #include "dataflow/node.hpp"
 
 namespace dataflow {
-class graph {
+class DATAFLOW_EXPORT graph {
  public:
   explicit graph(const std::vector<node*>& nodes);
   explicit graph(std::initializer_list<node*> nodes);

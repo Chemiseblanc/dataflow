@@ -6,8 +6,10 @@
 #include <string>
 #include <vector>
 
+#include "dataflow/api.hpp"
+
 namespace dataflow {
-class node {
+class DATAFLOW_EXPORT node {
  public:
   virtual ~node() = default;
 
@@ -55,7 +57,7 @@ class node {
 };
 
 template <typename... Inputs>
-class inputs : public virtual node {
+class DATAFLOW_EXPORT inputs : public virtual node {
  public:
   using tuple_type = std::tuple<Inputs...>;
   template <std::size_t i>
@@ -88,7 +90,7 @@ class inputs : public virtual node {
 };
 
 template <typename... Outputs>
-class outputs : public virtual node {
+class DATAFLOW_EXPORT outputs : public virtual node {
  public:
   using tuple_type = std::tuple<Outputs...>;
   template <std::size_t i>
