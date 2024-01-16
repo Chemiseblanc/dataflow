@@ -65,7 +65,7 @@ builder::builder(std::istream&& config_reader) {
     int to_id = link["to"]["id"];
     int to_port = link["to"]["port"];
     node_map.at(to_id)->input(to_port) =
-        node_map.at(from_id)->output(from_port);
+        std::as_const(*node_map.at(from_id)).output(from_port);
   }
 }
 
