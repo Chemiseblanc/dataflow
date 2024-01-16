@@ -5,7 +5,7 @@ if(DEFINED PROJECT_NAME)
 endif()
 
 project(Dataflow
-    VERSION 0.2.0
+    VERSION 0.2.1
     DESCRIPTION "A C++17 library for dataflow programming"
     LANGUAGES CXX
 )
