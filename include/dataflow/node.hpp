@@ -30,6 +30,10 @@ class DATAFLOW_EXPORT node {
  public:
   virtual ~node() = default;
 
+  node(){}
+  node(const node&) = delete;
+  node& operator=(const node&) = delete;
+
   virtual void operator()() {}
 
   [[nodiscard]] const std::string& label() const;
