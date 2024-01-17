@@ -30,7 +30,7 @@ class DATAFLOW_EXPORT node {
  public:
   virtual ~node() = default;
 
-  node(){}
+  node() {}
   node(const node&) = delete;
   node& operator=(const node&) = delete;
 
@@ -69,6 +69,12 @@ class DATAFLOW_EXPORT node {
 
 namespace impl {
 template <typename T>
+struct single_port;
+
+template <typename T>
+struct multi_port;
+
+template <typename T>
 struct single_port : public port {
   single_port() {}
   // Overload to default-initialize data so it can be assigned to
@@ -79,10 +85,11 @@ struct single_port : public port {
   [[nodiscard]] bool empty() const { return port_data == nullptr; }
   [[nodiscard]] bool connected_to(const port& other) const override {
     if (other.type() == type()) {
-      return port_data == dynamic_cast<const single_port<T>&>(other).port_data;
-    } else {
-      return false;
+      return port_data == dynamic_cast<const single_port&>(other).port_data;
+    } else if (other.type() == typeid(multi_port<T>)) {
+      return dynamic_cast<const multi_port<T>&>(other).connected_to(*this);
     }
+    return false;
   }
 
   void try_connect(const port& other) override {
