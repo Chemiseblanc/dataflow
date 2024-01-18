@@ -51,8 +51,10 @@ class DATAFLOW_EXPORT node {
   [[nodiscard]] bool input_connected_to(const node& other) const;
 
   void set_label(const std::string& label);
-  void set_input_label(std::size_t i, const std::string& label);
-  void set_output_label(std::size_t i, const std::string& label);
+  DATAFLOW_DEPRECATED void set_input_label(std::size_t i,
+                                           const std::string& label);
+  DATAFLOW_DEPRECATED void set_output_label(std::size_t i,
+                                            const std::string& label);
 
  protected:
   std::size_t add_inputs(std::vector<port*> ptrs);
@@ -207,7 +209,7 @@ class inputs : public virtual node {
 
   template <std::size_t i>
   [[nodiscard]] bool has() const {
-    return dynamic_cast<const port_type<i>&>(input(starting_idx + i)).empty();
+    return !dynamic_cast<const port_type<i>&>(input(starting_idx + i)).empty();
   }
 
  private:
