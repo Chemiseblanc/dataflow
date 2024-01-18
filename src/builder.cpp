@@ -14,7 +14,8 @@ void registry::register_type(std::unique_ptr<factory> factory_ptr) {
 }
 
 void registry::register_type(const std::string& type_name,
-                             factory_fn::fn_type function, std::string schema_str) {
+                             factory_fn::fn_type function,
+                             std::string schema_str) {
   instance().factories[type_name] =
       std::make_unique<factory_fn>(type_name, function, schema_str);
 }
@@ -57,7 +58,13 @@ builder::builder(std::istream&& config_reader) {
     int id = node["id"];
     std::string type = node["type"];
     auto& config = node["data"];
-    node_map.emplace(id, registry::instance().create(type, config));
+    try {
+      node_map.emplace(id, registry::instance().create(type, config));
+    } catch (nlohmann::json::exception& e) {
+      throw std::runtime_error("Error when building node " +
+                               std::to_string(id) + " (" + type +
+                               "): " + e.what());
+    }
   }
   for (auto&& link : config["links"]) {
     int from_id = link["from"]["id"];
