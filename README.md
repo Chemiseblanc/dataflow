@@ -37,6 +37,3 @@ int main(int argc, char* argv[] {
 }
 
 ```
-
-## Related
-- [dataflow-editor](https://github.com/chemiseblanc/dataflow-editor) A GUI for editing dataflows created using the included json-based node-builder.
