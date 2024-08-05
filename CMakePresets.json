@@ -12,10 +12,9 @@
             "displayName": "Default",
             "binaryDir": "${sourceDir}/artifacts/build/${presetName}",
             "installDir": "${sourceDir}/artifacts/install/${presetName}",
-            "toolchainFile": "${sourceDir}/vcpkg/scripts/buildsystems/vcpkg.cmake",
             "cacheVariables": {
-                "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions;--clean-after-build",
-                "VCPKG_DISABLE_COMPILER_TRACKING": true
+                "FETCH_VCPKG_DIR": "${sourceDir}/artifacts/vcpkg",
+                "VCPKG_INSTALL_OPTIONS": "--x-abi-tools-use-exact-versions;--clean-after-build"
             }
         },
         {

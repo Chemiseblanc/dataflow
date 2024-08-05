@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.25)
 
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+include(FetchVcpkg)
+fetch_vcpkg(TAG 2023.11.20)
+
 if(DEFINED PROJECT_NAME)
     set(IS_SUBPROJECT TRUE)
 endif()
