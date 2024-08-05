@@ -57,8 +57,7 @@
         {
             "name": "default",
             "displayName": "Default",
-            "configurePreset": "devel",
-            "configuration": "Debug"
+            "configurePreset": "devel"
         }
     ],
     "packagePresets": [
@@ -66,9 +65,6 @@
             "name": "default",
             "displayName": "Default",
             "configurePreset": "release",
-            "configurations": [
-                "Release"
-            ],
             "generators": [
                 "ZIP"
             ],

@@ -10,6 +10,9 @@
     {
       "name": "taskflow",
       "version>=": "3.6.0"
+    },
+    {
+      "name": "gtest"
     }
   ],
   "license": null

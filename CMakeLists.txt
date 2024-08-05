@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.25)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 include(FetchVcpkg)
@@ -161,7 +161,7 @@ if (NOT IS_SUBPROJECT)
     endif()
 
     include(CTest)
-    if (BUILD_TESTS)
+    if (BUILD_TESTING)
         add_subdirectory(tests)
     endif()
 endif()
