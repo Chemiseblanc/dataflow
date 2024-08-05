@@ -16,12 +16,12 @@ class taskflow : public virtual node {
 
 }  // namespace adapters
 
-void run_taskflow(tf::Executor& ex, graph& g) {
+inline void run_taskflow(tf::Executor& ex, graph& g) {
   tf::Taskflow& tf;
 
   ex.run(tf).wait();
 }
-void run_taskflow(graph& g) {
+inline void run_taskflow(graph& g) {
   tf::Executor ex;
   run_taskflow(ex, g);
 }

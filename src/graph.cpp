@@ -1,17 +1,19 @@
 #include "dataflow/graph.hpp"
 
 namespace dataflow {
-
-graph::graph(std::vector<node*> nodes) {
-  for (auto n : nodes) {
+graph::graph(const std::vector<node*>& nodes) {
+  for (auto* n : nodes) {
     adj_list[n] = {};
-    for (auto m : nodes) {
-      if ((*n).input_connected_to(*m)) {
+    for (auto* m : nodes) {
+      if (n->input_connected_to(*m)) {
         adj_list[n].insert(m);
       }
     }
   }
 }
+
+graph::graph(std::initializer_list<node*> nodes)
+    : graph({std::begin(nodes), std::end(nodes)}) {}
 
 const std::map<node*, std::set<node*>>& graph::adjacency() const {
   return adj_list;
@@ -34,6 +36,6 @@ void graph::dump(std::ostream& out) const {
       out << "  " << node_ids[m] << " -> " << node_ids[n] << "\n";
     }
   }
-  out << "}" << std::endl;
+  out << "}" << '\n';
 }
 }  // namespace dataflow

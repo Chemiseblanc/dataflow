@@ -5,18 +5,19 @@ namespace dataflow {
 std::string factory::node_type() const { return type; }
 
 registry& registry::instance() {
-  static registry r;
-  return r;
+  static registry reg;
+  return reg;
 }
 
-void registry::register_type(std::unique_ptr<factory> f) {
-  instance().factories[f->node_type()] = std::move(f);
+void registry::register_type(std::unique_ptr<factory> factory_ptr) {
+  instance().factories[factory_ptr->node_type()] = std::move(factory_ptr);
 }
 
 void registry::register_type(const std::string& type_name,
-                             factory_fn::fn_type f, std::string schema_str) {
+                             factory_fn::fn_type function,
+                             std::string schema_str) {
   instance().factories[type_name] =
-      std::make_unique<factory_fn>(type_name, f, schema_str);
+      std::make_unique<factory_fn>(type_name, function, schema_str);
 }
 
 std::unique_ptr<node> registry::create(const std::string& type,
@@ -56,8 +57,14 @@ builder::builder(std::istream&& config_reader) {
   for (auto&& node : config["nodes"]) {
     int id = node["id"];
     std::string type = node["type"];
-    auto& config = node["prop"];
-    node_map.emplace(id, registry::instance().create(type, config));
+    auto& config = node["data"];
+    try {
+      node_map.emplace(id, registry::instance().create(type, config));
+    } catch (nlohmann::json::exception& e) {
+      throw std::runtime_error("Error when building node " +
+                               std::to_string(id) + " (" + type +
+                               "): " + e.what());
+    }
   }
   for (auto&& link : config["links"]) {
     int from_id = link["from"]["id"];
@@ -65,7 +72,7 @@ builder::builder(std::istream&& config_reader) {
     int to_id = link["to"]["id"];
     int to_port = link["to"]["port"];
     node_map.at(to_id)->input(to_port) =
-        node_map.at(from_id)->output(from_port);
+        std::as_const(*node_map.at(from_id)).output(from_port);
   }
 }
 
